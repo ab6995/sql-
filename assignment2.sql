@@ -1,0 +1,16 @@
+SELECT * FROM sql2.ge;
+SELECT * FROM sql2.gspc;
+create index gedt on sql2.GE(DATE);
+select count(*) from sql2.GE;
+desc sql2.GE;
+create table gereturns select c.date , c.adjclose/ p.adjclose-1 rtn from sql2.ge c join sql2.ge p on p.date = (select max(date) from sql2.ge where date (c.date));
+desc gereturns;
+create table gspcreturns select c.date , c.adjclose/ p.adjclose-1 rtn from sql2.gspc c join sql2.gspc p on p.date = (select max(date) from sql2.gspc where date (c.date));
+select * from gspcreturns;
+desc gspcreturns;
+create table ols select sql2.ge.date , sql2.gspc.rtn x, sql2.ge.rtn y from gspcreturns gspc join gereturns ge on ge.date = gspc.date;
+select count(*) , min(date), max(date) from ols;
+use sql2;
+select avg(y) - (avg(x*y)-avg(x)*avg(y))/(avg(x*x)-avg(x)*avg(x))*avg(x) from ols;
+select (avg(x*y)-avg(x)*avg(y))/(avg(x*x)-avg(x)*avg(x)) from ols;
+select "GE = -0.007419680529787193  + 1.4770696215734773 *GSPC" equation;
