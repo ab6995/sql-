@@ -38,5 +38,24 @@ SELECT sum(POWER((x - (SELECT AVG(x) FROM ols))/ (SELECT stddev(x) FROM ols) , 4
 SELECT sum(POWER((y - (SELECT AVG(y) FROM ols))/ (SELECT stddev(y) FROM ols) , 4)) / count(y) skewness FROM ols;
 
 #p_value
+CREATE table ref9223 select rand() v from gspcreturns order by v;
+
+select * from ref9223;
+
+CReate table v9223 select rand() v from gspcreturns limit 10;
+
+select * from v9223;
 
 
+select V.v from v9223 V join ref9223 R on R.v=V.v;
+
+
+
+select V.v, (RH.v+RL.v)/2 pvalue from v9223 V
+
+join ref9223 RH on RH.v= (select MIN(RHI.v) from ref9223 RHI where RHI.v > V.v)
+
+join ref9223 RL on RL.v= (select MAX(RLI.v) from ref9223 RLI where RLI.v < V.v) ;
+
+#t_value
+select (abs(avg(x*y)-avg(x)*avg(y))/(avg(x*x)-avg(x)*avg(x)))/ stddev(x) t_value from ols;
